@@ -1,0 +1,40 @@
+CHROME WEB STORE — PRIVACY PRACTICES TAB
+
+--- Single purpose ---
+TabRest suspends idle browser tabs to reduce Chrome's CPU and memory usage.
+Users choose an idle time, and tabs untouched past that time are discarded
+(unloaded), then reloaded when clicked. That is the extension's single purpose.
+
+--- Permission justifications ---
+
+tabs:
+Required to detect which tabs are idle and to suspend (discard) or restore them.
+The extension reads tab activity and URLs only to decide what to suspend.
+
+storage:
+Required to save the user's settings (idle time, skip rules), whitelist, and
+per-site rules on the user's own device.
+
+alarms:
+Required to run a periodic background check that finds idle tabs to suspend.
+
+idle:
+Required to help detect user inactivity when deciding whether tabs are idle.
+
+contextMenus:
+Required to add right-click menu items: "Suspend this tab" and
+"Never suspend this site".
+
+Host permission (content script on http/https pages):
+Required so a small content script can detect whether a page has unsaved form
+input, so the extension never suspends a tab while the user is typing. It only
+checks whether a field changed — it never reads or transmits typed content.
+
+--- Data usage disclosures ---
+- Does this item collect or use personal or sensitive user data?  NO
+- Remote code:  NO (all code is included in the package)
+- Data sold to third parties:  NO
+- Data used for purposes unrelated to core functionality:  NO
+- Data used to determine creditworthiness / lending:  NO
+
+Certify: The extension does not collect or transmit any user data.

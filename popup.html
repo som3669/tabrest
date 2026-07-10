@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    :root {
+      --bg: #ffffff;
+      --panel: #f5f7fb;
+      --panel-brd: #e6eaf2;
+      --text: #1a1d24;
+      --muted: #7a8296;
+      --brand: #2b6cff;
+      --brand-ink: #ffffff;
+      --sec-bg: #eef1f6;
+      --sec-ink: #2a2f3a;
+      --divider: #edf0f5;
+      --hover: #f0f3f9;
+      --shadow: 0 1px 2px rgba(20,30,60,.06), 0 4px 12px rgba(20,30,60,.06);
+    }
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #16181d;
+        --panel: #1e2128;
+        --panel-brd: #2a2e37;
+        --text: #e8eaf0;
+        --muted: #9aa3b5;
+        --brand: #4b83ff;
+        --brand-ink: #ffffff;
+        --sec-bg: #262a33;
+        --sec-ink: #d6dae4;
+        --divider: #262a33;
+        --hover: #232732;
+        --shadow: 0 1px 2px rgba(0,0,0,.3), 0 4px 12px rgba(0,0,0,.3);
+      }
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      width: 300px; margin: 0; padding: 0;
+      font: 13px/1.45 system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: var(--bg); color: var(--text);
+    }
+    .wrap { padding: 14px; }
+
+    /* Header */
+    header { display: flex; align-items: center; gap: 9px; margin-bottom: 14px; }
+    .logo {
+      width: 28px; height: 28px; border-radius: 8px; flex: none;
+      background: linear-gradient(135deg, #2b6cff, #6a9bff);
+      display: grid; place-items: center; color: #fff; font-weight: 800; font-size: 15px;
+    }
+    header h1 { font-size: 15px; font-weight: 700; margin: 0; letter-spacing: -.2px; }
+    header .sub { font-size: 11px; color: var(--muted); margin: 0; }
+
+    /* Toggle row */
+    .card {
+      background: var(--panel); border: 1px solid var(--panel-brd);
+      border-radius: 12px; padding: 4px 12px; margin-bottom: 10px;
+    }
+    .row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 9px 0; gap: 10px;
+    }
+    .row + .row { border-top: 1px solid var(--divider); }
+    .row label { font-weight: 500; }
+
+    /* iOS-style switch */
+    .switch { position: relative; width: 40px; height: 23px; flex: none; }
+    .switch input { opacity: 0; width: 0; height: 0; }
+    .slider {
+      position: absolute; inset: 0; cursor: pointer; border-radius: 999px;
+      background: #c6ccd8; transition: .2s;
+    }
+    @media (prefers-color-scheme: dark) { .slider { background: #3a404d; } }
+    .slider::before {
+      content: ""; position: absolute; height: 17px; width: 17px; left: 3px; top: 3px;
+      background: #fff; border-radius: 50%; transition: .2s; box-shadow: 0 1px 2px rgba(0,0,0,.25);
+    }
+    .switch input:checked + .slider { background: var(--brand); }
+    .switch input:checked + .slider::before { transform: translateX(17px); }
+
+    /* Idle preset chips */
+    .row.idle, .row.custom-row { flex-wrap: wrap; }
+    .presets { display: flex; gap: 6px; }
+    .presets button {
+      flex: none; width: auto; padding: 6px 10px; border-radius: 8px; font: 600 12px system-ui, sans-serif;
+      background: var(--sec-bg); color: var(--sec-ink); cursor: pointer;
+    }
+    .presets button.active { background: var(--brand); color: var(--brand-ink); }
+    .presets button:hover { filter: brightness(.97); }
+
+    /* Number input */
+    .num {
+      width: 62px; padding: 6px 8px; text-align: center;
+      border: 1px solid var(--panel-brd); border-radius: 8px;
+      background: var(--bg); color: var(--text); font: inherit;
+    }
+    .num:focus { outline: 2px solid var(--brand); outline-offset: -1px; border-color: transparent; }
+
+    /* Buttons */
+    .btns { display: flex; gap: 8px; margin-bottom: 12px; }
+    button {
+      flex: 1; padding: 10px; border: 0; border-radius: 10px;
+      font: 600 13px system-ui, sans-serif; cursor: pointer; transition: filter .15s, transform .05s;
+    }
+    button:active { transform: translateY(1px); }
+    .primary { background: var(--brand); color: var(--brand-ink); box-shadow: var(--shadow); }
+    .primary:hover { filter: brightness(1.06); }
+    .secondary { background: var(--sec-bg); color: var(--sec-ink); }
+    .secondary:hover { filter: brightness(.97); }
+    button.wide { font-size: 12px; font-weight: 500; padding: 9px; }
+    button[hidden] { display: none; }
+
+    /* Stats */
+    .stats {
+      display: flex; gap: 10px; margin-bottom: 14px;
+    }
+    .stat {
+      flex: 1; background: var(--panel); border: 1px solid var(--panel-brd);
+      border-radius: 12px; padding: 10px 12px; text-align: center;
+    }
+    .stat .n { font-size: 20px; font-weight: 800; color: var(--brand); letter-spacing: -.5px; }
+    .stat .k { font-size: 10.5px; color: var(--muted); margin-top: 2px; text-transform: uppercase; letter-spacing: .4px; }
+
+    /* Section title */
+    .sect { display: flex; align-items: center; justify-content: space-between; margin: 0 2px 6px; }
+    .sect h2 { font-size: 11px; font-weight: 700; color: var(--muted); margin: 0; text-transform: uppercase; letter-spacing: .5px; }
+    .link-btn { width: auto; padding: 2px 4px; background: transparent; color: var(--brand); font: 600 11px system-ui, sans-serif; cursor: pointer; }
+    .link-btn:hover { text-decoration: underline; }
+
+    /* Visible focus for keyboard users */
+    button:focus-visible, input:focus-visible, a:focus-visible, .switch input:focus-visible + .slider {
+      outline: 2px solid var(--brand); outline-offset: 2px;
+    }
+
+    /* List */
+    ul { list-style: none; margin: 0; padding: 0; max-height: 190px; overflow-y: auto; }
+    li {
+      display: flex; align-items: center; gap: 9px; padding: 7px 8px; border-radius: 9px;
+    }
+    li:hover { background: var(--hover); }
+    li .fav { width: 16px; height: 16px; flex: none; border-radius: 3px; }
+    li .fav.ph { background: var(--sec-bg); display: grid; place-items: center; font-size: 9px; color: var(--muted); }
+    li .meta { min-width: 0; flex: 1; }
+    li .t { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
+    li .h { font-size: 10.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    li button {
+      flex: none; width: auto; padding: 5px 10px; font-size: 11px;
+      background: var(--sec-bg); color: var(--sec-ink); border-radius: 7px;
+    }
+    .empty { color: var(--muted); font-size: 12px; padding: 14px 8px; text-align: center; }
+
+    /* Status + footer */
+    .status { min-height: 15px; font-size: 11.5px; color: var(--brand); margin: 6px 2px 0; }
+    footer { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--divider); text-align: center; }
+    footer a { font-size: 12px; color: var(--brand); text-decoration: none; font-weight: 500; }
+    footer a:hover { text-decoration: underline; }
+
+    /* scrollbar */
+    ul::-webkit-scrollbar { width: 8px; }
+    ul::-webkit-scrollbar-thumb { background: var(--panel-brd); border-radius: 8px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div class="logo">Z</div>
+      <div>
+        <h1>TabRest</h1>
+        <p class="sub">Rest idle tabs. Save CPU &amp; RAM.</p>
+      </div>
+    </header>
+
+    <div class="card">
+      <div class="row">
+        <label for="enabled">Auto-suspend idle tabs</label>
+        <label class="switch">
+          <input type="checkbox" id="enabled" aria-label="Auto-suspend idle tabs">
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="row idle">
+        <label>Suspend after</label>
+        <div class="presets" id="presets" role="group" aria-label="Idle time">
+          <button type="button" data-min="5">5m</button>
+          <button type="button" data-min="15">15m</button>
+          <button type="button" data-min="30">30m</button>
+          <button type="button" data-min="60">1h</button>
+          <button type="button" data-min="custom" id="customBtn">Custom</button>
+        </div>
+      </div>
+      <div class="row custom-row" id="customRow" hidden>
+        <label for="idle">Custom minutes</label>
+        <input type="number" id="idle" class="num" min="1" max="720" aria-label="Custom idle minutes">
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat"><div class="n" id="stN">0</div><div class="k">Suspended</div></div>
+      <div class="stat"><div class="n" id="stMB">0</div><div class="k">RAM saved</div></div>
+      <div class="stat"><div class="n" id="stLife">0</div><div class="k">Lifetime</div></div>
+    </div>
+
+    <div class="btns">
+      <button class="primary" id="suspendAll">Suspend all</button>
+      <button class="secondary" id="scanNow">Scan now</button>
+    </div>
+
+    <div class="btns">
+      <button class="secondary wide" id="whitelistSite">🛡 Never suspend this site</button>
+      <button class="secondary wide" id="undo" hidden>↩ Undo last</button>
+    </div>
+
+    <div class="sect">
+      <h2>Suspended tabs</h2>
+      <button class="link-btn" id="restoreAll" hidden>Restore all</button>
+    </div>
+    <ul id="list"></ul>
+
+    <div class="status" id="status"></div>
+
+    <footer><a href="options.html" target="_blank">⚙ Settings &amp; whitelist</a></footer>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
