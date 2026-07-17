@@ -184,7 +184,13 @@ $("scanNow").addEventListener("click", () => {
   chrome.runtime.sendMessage({ type: "scanNow" }, () => { status("Scan done"); renderList(); renderStats(); });
 });
 
+function refreshLive() { renderList(); renderStats(); }
+
 load();
-renderList();
-renderStats();
+refreshLive();
 refreshWhitelistBtn();
+
+// Keep the popup counts and list live while it is open (auto-suspend runs in the
+// background, so numbers can change without the user clicking anything).
+const liveTimer = setInterval(refreshLive, 1000);
+window.addEventListener("unload", () => clearInterval(liveTimer));

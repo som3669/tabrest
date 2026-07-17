@@ -1,8 +1,8 @@
 const $ = (id) => document.getElementById(id);
 
-const DEFAULTS = { skipAudible: true, skipPinned: true, whitelist: [], rules: [] };
+const DEFAULTS = { skipAudible: true, skipPinned: true, whitelist: [], rules: [], autoClose: false, autoCloseMinutes: 120 };
 
-let state = { skipAudible: true, skipPinned: true, whitelist: [], rules: [] };
+let state = { skipAudible: true, skipPinned: true, whitelist: [], rules: [], autoClose: false, autoCloseMinutes: 120 };
 
 // --- persistence ---
 let savedTimer;
@@ -20,12 +20,21 @@ async function load() {
     skipAudible: s.skipAudible,
     skipPinned: s.skipPinned,
     whitelist: [...(s.whitelist || [])],
-    rules: (s.rules || []).map((r) => ({ ...r }))
+    rules: (s.rules || []).map((r) => ({ ...r })),
+    autoClose: !!s.autoClose,
+    autoCloseMinutes: s.autoCloseMinutes || 120
   };
   $("skipAudible").checked = state.skipAudible;
   $("skipPinned").checked = state.skipPinned;
+  $("autoClose").checked = state.autoClose;
+  $("autoCloseMin").value = state.autoCloseMinutes;
+  updateAutoCloseUI();
   renderWhitelist();
   renderRules();
+}
+
+function updateAutoCloseUI() {
+  $("autoCloseBody").style.display = state.autoClose ? "block" : "none";
 }
 
 // host -> favicon URL, gathered from open tabs (no external requests)
@@ -163,6 +172,20 @@ $("ruleAdd").addEventListener("click", () => {
 // --- toggles ---
 $("skipAudible").addEventListener("change", () => { state.skipAudible = $("skipAudible").checked; save(); });
 $("skipPinned").addEventListener("change", () => { state.skipPinned = $("skipPinned").checked; save(); });
+
+// --- auto-close (advanced, opt-in) ---
+$("autoClose").addEventListener("change", () => {
+  state.autoClose = $("autoClose").checked;
+  updateAutoCloseUI();
+  save();
+});
+$("autoCloseMin").addEventListener("change", () => {
+  let v = parseInt($("autoCloseMin").value, 10) || 120;
+  v = Math.max(5, Math.min(10080, v));
+  $("autoCloseMin").value = v;
+  state.autoCloseMinutes = v;
+  save();
+});
 
 // Keep clean host on save: drop empty-host rules before persisting is handled by SW ignoring blanks.
 loadOpenHosts();

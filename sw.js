@@ -6,7 +6,9 @@ const DEFAULTS = {
   skipAudible: true,    // never discard tabs playing sound
   skipPinned: true,     // never discard pinned tabs
   whitelist: [],        // array of hostnames never discarded
-  rules: []             // per-site overrides: [{ host, minutes }]
+  rules: [],            // per-site overrides: [{ host, minutes }]
+  autoClose: false,     // OFF by default — auto-close (not just suspend) idle tabs
+  autoCloseMinutes: 120 // idle time before an unused tab is closed
 };
 
 // Rough RAM estimate per suspended tab (bytes). Chrome frees ~50-150MB per tab.
@@ -111,6 +113,9 @@ chrome.runtime.onStartup.addListener(init);
 // Track interaction so active/recent tabs are safe.
 chrome.tabs.onActivated.addListener(({ tabId }) => touch(tabId));
 chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
+  // Discarding a tab fires onUpdated too — don't treat that as user activity,
+  // or the idle timer would reset and auto-close could never trigger.
+  if (changeInfo.discarded === true) { updateBadge(); return; }
   touch(tabId);
   // Navigating/reloading clears any unsaved-form flag for that tab.
   if (changeInfo.status === "loading") markDirty(tabId, false);
@@ -119,9 +124,9 @@ chrome.tabs.onUpdated.addListener((tabId, changeInfo) => {
 chrome.tabs.onCreated.addListener((tab) => touch(tab.id));
 chrome.tabs.onRemoved.addListener((tabId) => { delete lastActive[tabId]; markDirty(tabId, false); updateBadge(); });
 
-function shouldSkip(tab, s, dirty) {
+// Protections shared by suspend and close (does NOT check discarded state).
+function isProtected(tab, s, dirty) {
   if (tab.active) return true;                 // never touch focused tab
-  if (tab.discarded) return true;              // already suspended
   if (s.skipPinned && tab.pinned) return true;
   if (s.skipAudible && tab.audible) return true;
   if (dirty && dirty.has(tab.id)) return true; // unsaved form input
@@ -129,6 +134,22 @@ function shouldSkip(tab, s, dirty) {
   if (!host) return true;                       // chrome:// pages etc.
   if (s.whitelist.includes(host)) return true;
   return false;
+}
+
+// Skip rule for SUSPEND: protections + already-suspended tabs.
+function shouldSkip(tab, s, dirty) {
+  if (isProtected(tab, s, dirty)) return true;
+  if (tab.discarded) return true;              // already suspended
+  return false;
+}
+
+async function closeTab(tabId) {
+  try {
+    await chrome.tabs.remove(tabId);
+    const cur = await chrome.storage.local.get({ closedCount: 0 });
+    await chrome.storage.local.set({ closedCount: cur.closedCount + 1 });
+    return true;
+  } catch { return false; }
 }
 
 async function scan() {
@@ -139,10 +160,19 @@ async function scan() {
   const tabs = await chrome.tabs.query({});
   const done = [];
   for (const tab of tabs) {
+    const seen = lastActive[tab.id] ?? now;
+
+    // Auto-close pass (opt-in). Applies to idle tabs incl. already-suspended ones,
+    // but never to protected tabs (active/pinned/audible/whitelist/unsaved forms).
+    if (s.autoClose && !isProtected(tab, s, dirty)) {
+      const closeCutoff = now - s.autoCloseMinutes * 60 * 1000;
+      if (seen <= closeCutoff) { await closeTab(tab.id); continue; }
+    }
+
+    // Suspend pass (unchanged behaviour).
     if (shouldSkip(tab, s, dirty)) continue;
     const minutes = thresholdFor(hostOf(tab.url), s);
     const cutoff = now - minutes * 60 * 1000;
-    const seen = lastActive[tab.id] ?? now;
     if (seen <= cutoff && await discardTab(tab.id)) done.push(tab.id);
   }
   if (done.length) await rememberBatch(done);
