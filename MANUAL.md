@@ -133,3 +133,5 @@ TabRest runs entirely on your device. It does not send any data anywhere.
 Settings sync through your Chrome account (Chrome's own sync). The form-guard
 content script only checks whether a field on the page has unsaved input — it
 never reads or transmits what you typed.
+
+Full policy: https://som3669.github.io/privacy-policy/tabrest/

@@ -38,3 +38,12 @@ checks whether a field changed — it never reads or transmits typed content.
 - Data used to determine creditworthiness / lending:  NO
 
 Certify: The extension does not collect or transmit any user data.
+
+--- Privacy policy URL (dashboard field) ---
+https://som3669.github.io/privacy-policy/tabrest/
+
+Source: src/tabrest.md in github.com/som3669/privacy-policy, rendered to HTML and
+served from GitHub Pages. Hosted there rather than from this repo so the URL
+stays reachable even if this repo goes private — a dead privacy policy URL is a
+compliance problem, not a broken link. Paste it into the dedicated dashboard
+field; it must not live only in the description.
