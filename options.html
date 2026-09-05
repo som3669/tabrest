@@ -129,6 +129,27 @@
       <label class="switch"><input type="checkbox" id="skipPinned"><span class="slider"></span></label>
     </div>
 
+    <h2>Suspending tabs that are still loading</h2>
+    <div class="row">
+      <span>Stop tabs mid-load</span>
+      <label class="switch"><input type="checkbox" id="stopMidLoad"><span class="slider"></span></label>
+    </div>
+    <div class="hint" id="stopMidLoadHint">
+      <p>When you suspend a big batch of tabs, Chrome has only started loading a
+      few of them — the rest are queued and cannot be suspended the normal way.
+      With this on, TabRest stops those tabs at once and rests them on a small
+      TabRest page that remembers where each one was going. Click the tab to go
+      back to the real page.</p>
+      <p>Turn this off and queued tabs are left to finish loading first, then
+      suspended. Nothing is stopped early and no tab ever shows a TabRest
+      address — but a large batch keeps downloading for a while after you press
+      the button.</p>
+      <p><strong>Worth knowing:</strong> a tab resting on the TabRest page needs
+      TabRest installed to return on its own. If you remove the extension while
+      tabs are resting there, their addresses are still readable in the address
+      bar, but you would have to reopen them yourself.</p>
+    </div>
+
     <h2>Whitelist — never suspend</h2>
     <p class="hint">Tip: fastest way is the <strong>🛡 Never suspend this site</strong> button in the popup.</p>
     <div class="add-row">

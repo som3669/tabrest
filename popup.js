@@ -26,6 +26,9 @@ function applyIdleUI(minutes) {
     $("customBtn").classList.remove("active");
     $("customRow").hidden = true;
   }
+  // Chrome caps extension alarms at once a minute, so anything under ~3 min
+  // lands later than the number suggests. Say so rather than let it look broken.
+  $("idleNote").hidden = minutes > 3;
 }
 
 async function setIdle(minutes) {

@@ -1,8 +1,8 @@
 const $ = (id) => document.getElementById(id);
 
-const DEFAULTS = { skipAudible: true, skipPinned: true, whitelist: [], rules: [], autoClose: false, autoCloseMinutes: 120 };
+const DEFAULTS = { skipAudible: true, skipPinned: true, whitelist: [], rules: [], autoClose: false, autoCloseMinutes: 120, stopMidLoad: true };
 
-let state = { skipAudible: true, skipPinned: true, whitelist: [], rules: [], autoClose: false, autoCloseMinutes: 120 };
+let state = { skipAudible: true, skipPinned: true, whitelist: [], rules: [], autoClose: false, autoCloseMinutes: 120, stopMidLoad: true };
 
 // --- persistence ---
 let savedTimer;
@@ -22,11 +22,13 @@ async function load() {
     whitelist: [...(s.whitelist || [])],
     rules: (s.rules || []).map((r) => ({ ...r })),
     autoClose: !!s.autoClose,
-    autoCloseMinutes: s.autoCloseMinutes || 120
+    autoCloseMinutes: s.autoCloseMinutes || 120,
+    stopMidLoad: s.stopMidLoad !== false
   };
   $("skipAudible").checked = state.skipAudible;
   $("skipPinned").checked = state.skipPinned;
   $("autoClose").checked = state.autoClose;
+  $("stopMidLoad").checked = state.stopMidLoad;
   $("autoCloseMin").value = state.autoCloseMinutes;
   updateAutoCloseUI();
   renderWhitelist();
@@ -172,6 +174,7 @@ $("ruleAdd").addEventListener("click", () => {
 // --- toggles ---
 $("skipAudible").addEventListener("change", () => { state.skipAudible = $("skipAudible").checked; save(); });
 $("skipPinned").addEventListener("change", () => { state.skipPinned = $("skipPinned").checked; save(); });
+$("stopMidLoad").addEventListener("change", () => { state.stopMidLoad = $("stopMidLoad").checked; save(); });
 
 // --- auto-close (advanced, opt-in) ---
 $("autoClose").addEventListener("change", () => {

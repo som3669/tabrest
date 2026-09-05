@@ -23,6 +23,15 @@ A suspended tab stops running its scripts, ads, timers, and background activity.
 • Toolbar badge shows how many tabs are resting
 • Clean popup with light and dark mode
 
+★ STOPS TABS MID-LOAD
+
+Open a folder of 30 tabs at once and Chrome loads them a few at a time while the
+rest wait their turn. Hit "Suspend All" and TabRest stops every one of them right
+away, including the tabs that had not started loading yet — no waiting for the
+whole batch to finish downloading first. Tabs caught mid-load rest on a small
+TabRest page showing their title and address; click the tab to go straight back
+to the real page.
+
 ★ NEVER SUSPENDED
 
 The active tab, tabs playing audio, pinned tabs, tabs with unsaved form input, whitelisted sites, and browser pages are always left alone.

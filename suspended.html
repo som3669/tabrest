@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Suspended</title>
+<style>
+  :root { color-scheme: light dark; }
+  body {
+    margin: 0; min-height: 100vh; display: flex; align-items: center; justify-content: center;
+    font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif;
+    background: #f6f7f9; color: #1b1d21;
+  }
+  @media (prefers-color-scheme: dark) { body { background: #16181c; color: #e6e8ec; } }
+  main { text-align: center; padding: 32px; max-width: 520px; }
+  .fav { width: 32px; height: 32px; border-radius: 6px; margin-bottom: 14px; }
+  h1 { font-size: 17px; font-weight: 600; margin: 0 0 6px; overflow-wrap: anywhere; }
+  .host { font-size: 13px; opacity: .6; margin: 0 0 14px; overflow-wrap: anywhere; }
+  .url {
+    font: 12px/1.5 ui-monospace, SFMono-Regular, Consolas, monospace;
+    background: rgba(127,127,127,.12); border-radius: 6px; padding: 8px 10px;
+    margin: 0 0 16px; overflow-wrap: anywhere; user-select: all;
+  }
+  .btns { display: flex; gap: 8px; justify-content: center; }
+  button {
+    font: inherit; font-weight: 500; color: #fff; background: #2b6cff;
+    border: 0; border-radius: 7px; padding: 9px 18px; cursor: pointer;
+  }
+  button:hover { background: #1d5bea; }
+  button.ghost { background: transparent; color: inherit; border: 1px solid rgba(127,127,127,.4); }
+  button.ghost:hover { background: rgba(127,127,127,.2); }
+  .hint { font-size: 12px; opacity: .5; margin-top: 14px; }
+</style>
+</head>
+<body>
+  <main>
+    <img class="fav" id="fav" alt="" hidden>
+    <h1 id="title">Tab suspended</h1>
+    <p class="host" id="host"></p>
+    <p class="url" id="url"></p>
+    <div class="btns">
+      <button id="restore">Reload this tab</button>
+      <button class="ghost" id="copy">Copy address</button>
+    </div>
+    <p class="hint">TabRest suspended this tab to save memory.</p>
+  </main>
+  <script src="suspended.js"></script>
+</body>
+</html>
